@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+    <!--[if lt IE 9]>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/jquery-2.1.3.js"></script>
+    <script type="text/javascript" src="js/angular.js"></script>
+    <script type="text/javascript" src="js/ng-table.min.js"></script>
+    <link rel="stylesheet" href="../dist/ng-table.css">
+</head>
+<body ng-app="main">
+
+<h1>Dynamic columns</h1>
+
+<div ng-controller="DemoCtrl">
+
+    Columns:
+    <label class="checkbox" ng-repeat="column in cols">
+        <input type="checkbox" ng-model="column.show" /> {{column.title}}
+    </label>
+    <!-- <div>
+        <p ng-repeat="i in data">{{i.id}}</p>
+    </div> -->
+
+    <table ng-table="tableParams"  class="table table-bordered table-striped">
+       
+        <tr ng-repeat="user in $data">
+            hello
+        </tr>
+    </table>
+
+    <script>
+        var app = angular.module('main', ['ngTable'])
+                .controller('DemoCtrl', function ($scope, $filter, $q, ngTableParams,$http) {
+                    $http.get("location/locations.json").success(function(data){
+                        //console.log(data)
+                        $scope.data=data;
+
+                       $scope.generateTable()
+                       
+                    })
+
+                    $scope.generateTable=function()
+                    {
+                        var usernameCol = {
+                            title: 'id',
+                            titleAlt: 'id',
+                            show: true,
+                            field: 'id'
+                        };
+                        $scope.cols = [usernameCol];
+                        
+                        $scope.tableParams = new ngTableParams({
+                            page: 1, // show first page
+                            count: 10, // count per page
+                            
+
+                        }, {
+                            total: $scope.data.length, // length of data
+
+                            getData: function($defer, params) {
+                                
+                                params.total($scope.data.length);
+
+                                $defer.resolve($scope.data.slice((params.page() - 1) * params.count(),
+                                    params.page() * params.count()));
+                            },
+                            $scope: { $data: {} }
+                        });
+                    }
+                
+                })
+    </script>
+
+</div>
+
+
+</body>
+</html>

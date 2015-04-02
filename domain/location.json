@@ -1,0 +1,45 @@
+{
+  "name":"location",
+  "displayName":"Location",
+  "url":"location.php",
+  "fields":[
+    {
+      "name":"id",
+      "displayName":"ID",
+      "type":"number",
+      "visible":false
+    },
+    {
+      "name":"code",
+      "displayName":"Code",
+      "type":"string",
+      "visible":true
+    },
+    {
+      "name":"type",
+      "displayName":"Type",
+      "type":"dependent",
+      "url":"abc",
+      "visible":"true"
+    },
+    {
+      "name":"attributes",
+      "displayName":"Attributes",
+      "type":"array",
+      "items": {
+        "type": "object",
+        "properties": {
+
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }       
+        }
+      }
+    }
+  ]
+}

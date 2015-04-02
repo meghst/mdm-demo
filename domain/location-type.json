@@ -1,0 +1,25 @@
+{
+  "name":"location-type",
+  "displayName":"Location Type",
+  "url":"location-type.php",
+  "fields":[
+    {
+      "name":"id",
+      "displayName":"ID",
+      "type":"number",
+      "visible":false
+    },
+    {
+      "name":"code",
+      "displayName":"Code",
+      "type":"string",
+      "visible":true
+    },
+    {
+      "name":"name",
+      "displayName":"type",
+      "type":"dependent",
+      "url":"abc",
+      "visible":"true"
+    }]
+}

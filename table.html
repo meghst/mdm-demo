@@ -1,0 +1,6 @@
+
+<table ng-table-dynamic="tableParams with cols" show-filter="true" class="table table-bordered table-striped">
+    <tr ng-repeat="record in $data">
+        <td ng-repeat="col in $columns">{{record[col.field]}}</td>
+    </tr>
+</table>

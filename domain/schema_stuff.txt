@@ -1,0 +1,86 @@
+connection id,src_loc, dest_loc,attributes)
+location-type(id,name,code)
+location(id,name,code,type,attribute)
+
+
+a) ADMIN CRUD
+ /location POST
+read /location:id
+put /location:id PUT
+delete /location:id DELETE
+
+b)list all entity types
+
+/location GET
+
+
+TODO
+1)entity type & entity
+
+	a) schema:
+		name of entity
+		fields of entity[ name,type,ui-side validation,native/dependent[,url for list]]
+		entity level validation: Eg: if location-type== PINCODE
+										then attribute[customerlocation]=true
+
+
+location={
+	"name":"location",
+	"displayName":"Location",
+	"url":"something/location",
+	"fields":[
+		{
+			"name":"id",
+			"displayName":"id",
+			"type":"number",
+			"visible":false
+		},
+		{
+			"name":"code",
+			"displayName":"code",
+			"type":"string",
+			"visible":true
+		},
+		{
+			"name":"type",
+			"displayName":"type",
+			"type":"dependent",
+			"url":"abc"
+			"visible":"true"
+		},
+		{
+			"name":"attributes",
+			"displayName":"attributes",
+			"type":"array",
+			"items": {
+				"type": "object",
+				"properties": {
+
+					"key": {
+						"title": "Key",
+						"type": "string"
+					},
+					"value": {
+						"title": "Value",
+						"type": "string"
+					}				
+				}
+			}
+
+		}
+	],
+	"validations":[
+		{
+			"if":"location-type== 'PINCODE'",
+			"then":"attribute[customerlocation]=true",
+			"errormsg":"lorem ipsum"
+		},
+		{
+			"if":"location_type=='PINCODE'",
+			"then":"//js code for checking regex match",
+			"errormsg":"blah"
+		}
+	]
+}
+
+
