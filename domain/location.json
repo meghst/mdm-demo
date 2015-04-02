@@ -19,13 +19,14 @@
       "name":"type",
       "displayName":"Type",
       "type":"dependent",
-      "url":"abc",
+      "url":"domain/location-type-enum.json",
       "visible":"true"
     },
     {
       "name":"attributes",
       "displayName":"Attributes",
       "type":"array",
+      "visible":true,
       "items": {
         "type": "object",
         "properties": {

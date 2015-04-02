@@ -11,30 +11,77 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
     $http.get("get_entity_list.php").success(function(entityList)
     {
         $scope.entityList=entityList;
-        // console.log("scope.entityList=",$scope.entityList)
-
-        //get schemas for each entity list
         for(var i in $scope.entityList) 
         {
-            // console.log(i)
-            // console.log(encodeURIComponent($scope.entityList[i]))
             $http.get("get_entity_schema.php?entityType="+encodeURIComponent($scope.entityList[i]))
             .success(function(data)
             {
-                
-
-                $scope.entitySchemas[data.name]=data;
-                // console.log($scope.entitySchemas)
+                schema=$scope.convertSchema(data)
+                $scope.entitySchemas[data.name]=schema;
             });
         }
     });
 
+
+    $scope.convertSchema=function(data)
+    {
+        var schema={}
+        schema["type"]="object"
+        schema["title"]=data["displayName"]
+        schema["properties"]={}
+        for (var index in data["fields"])
+        {
+
+            field=data["fields"][index]
+            
+            if(field.visible)
+             {
+                name=field.name
+                // console.log(name)
+                schema["properties"][name]={}
+                schema["properties"][name]["title"]=field.displayName
+                //console.log(field.type)
+                if(field.type=="array")
+                 {   
+                    //console.log(field.type)
+                    schema["properties"][name].type="array"
+                    schema["properties"][name].items=field.items
+
+                }
+                else if(field.type=="dependent")
+                {
+                    schema["properties"][name]["type"]="string"
+
+                    schema["properties"][name]["enum"]=$scope.getEnum(field.url)
+                }
+                else
+                {
+                    schema["properties"][name]["type"]=field.type
+                }
+                // console.log(field)
+            }
+
+        }
+        console.log(schema)
+        return schema
+
+    }
+    $scope.getEnum=function(url)
+    {
+        enum_list=[]
+        $http.get(field.url)
+                    .success(function (data)
+                    {
+                        enum_list=data
+                    });
+
+        return enum_list
+    }
     $scope.selectEntity=function(entityName)
     {
         $scope.columns=[]
         $scope.data={}
         $scope.showTable=false
-        //console.log(entityName)
         $scope.currentEntity=entityName
         BootstrapDialog.show({
             title: $scope.entitySchemas[entityName].displayName,
@@ -50,15 +97,7 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
 
                     BootstrapDialog.closeAll()
                     geturl=$scope.entitySchemas[entityName].url
-
-                    //get table template and load into #table
-
-                    //$("#table").load("table.html")
-
-                    
                     $http.get(geturl).success(function(data){
-                        //console.log(data)
-                        //$scope.data=data;
                        $scope.data=data
                        $scope.generateTable()
                     })
@@ -67,18 +106,15 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
 
                 $content.find("#create").click(function (){
                     BootstrapDialog.closeAll()
-                    // console.log("create")
                 })
 
                 $content.find("#update").click(function (){
                     BootstrapDialog.closeAll()
-                    // console.log("update")
                 })
 
 
                 $content.find("#delete").click(function (){
                     BootstrapDialog.closeAll()
-                    // console.log("delete")
                 })
 
                 return $content;
@@ -90,7 +126,6 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
 
     $scope.generateTable = function() {
 
-        //console.log($scope.data)
         $scope.fields=$scope.entitySchemas[$scope.currentEntity].fields
         
         for(var field in $scope.fields)

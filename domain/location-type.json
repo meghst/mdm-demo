@@ -16,10 +16,9 @@
       "visible":true
     },
     {
-      "name":"name",
-      "displayName":"type",
-      "type":"dependent",
-      "url":"abc",
+      "name":"type",
+      "displayName":"Type",
+      "type":"string",
       "visible":"true"
     }]
 }
