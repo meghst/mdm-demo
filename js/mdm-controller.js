@@ -1,11 +1,19 @@
-angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashboard', function($scope, $http,ngTableParams) {
+angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport','schemaForm']).controller('dashboard', function($scope, $http,ngTableParams) {
     
     $scope.displayMenu=true
     $scope.entityList=[]
     $scope.entitySchemas={}
+    $scope.entityFormSchemas={}
     $scope.columns=[]
     $scope.data={}
-    $scope.showTable=false
+    $scope.showTabs=false
+    $scope.forms={}
+    
+
+    $('#myTab a').click(function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+    })
 
     //get entities list
     $http.get("get_entity_list.php").success(function(entityList)
@@ -16,8 +24,18 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
             $http.get("get_entity_schema.php?entityType="+encodeURIComponent($scope.entityList[i]))
             .success(function(data)
             {
-                schema=$scope.convertSchema(data)
-                $scope.entitySchemas[data.name]=schema;
+                
+                $scope.entitySchemas[data.name]=data;
+                $scope.entityFormSchemas[data.name]=$scope.convertSchema(data)
+                $scope.forms[data.name]=[
+                    "*",
+                    {
+                        type:"submit",
+                        title:"Create"
+                    }
+                ]
+                $scope.model={};
+                
             });
         }
     });
@@ -81,45 +99,51 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
     {
         $scope.columns=[]
         $scope.data={}
-        $scope.showTable=false
+        $scope.showTabs=true
         $scope.currentEntity=entityName
-        BootstrapDialog.show({
-            title: $scope.entitySchemas[entityName].displayName,
-            message: function() {
-                var $content = $('<div style="text-align:center"> \
-                    <button id="display" class="btn btn-default" style="margin-right:10px">Display</button> \
-                    <button id="create" class="btn btn-primary" style="margin-right:10px">Create</button> \
-                    <button id="update" class="btn btn-warning" style="margin-right:10px">Update</button> \
-                    <button id="delete" class="btn btn-danger" style="margin-right:10px">Delete</button> \
-                    </div>');
-
-                $content.find("#display").click(function (){
-
-                    BootstrapDialog.closeAll()
-                    geturl=$scope.entitySchemas[entityName].url
-                    $http.get(geturl).success(function(data){
+        geturl=$scope.entitySchemas[entityName].url
+        $http.get(geturl).success(function(data){
                        $scope.data=data
                        $scope.generateTable()
                     })
 
-                })
+        // BootstrapDialog.show({
+        //     title: $scope.entitySchemas[entityName],
+        //     message: function() {
+        //         var $content = $('<div style="text-align:center"> \
+        //             <button id="display" class="btn btn-default" style="margin-right:10px">Display</button> \
+        //             <button id="create" class="btn btn-primary" style="margin-right:10px">Create</button> \
+        //             <button id="update" class="btn btn-warning" style="margin-right:10px">Update</button> \
+        //             <button id="delete" class="btn btn-danger" style="margin-right:10px">Delete</button> \
+        //             </div>');
 
-                $content.find("#create").click(function (){
-                    BootstrapDialog.closeAll()
-                })
+        //         $content.find("#display").click(function (){
 
-                $content.find("#update").click(function (){
-                    BootstrapDialog.closeAll()
-                })
+        //             BootstrapDialog.closeAll()
+        //             geturl=$scope.entitySchemas[entityName].url
+        //             $http.get(geturl).success(function(data){
+        //                $scope.data=data
+        //                $scope.generateTable()
+        //             })
+
+        //         })
+
+        //         $content.find("#create").click(function (){
+        //             BootstrapDialog.closeAll()
+        //         })
+
+        //         $content.find("#update").click(function (){
+        //             BootstrapDialog.closeAll()
+        //         })
 
 
-                $content.find("#delete").click(function (){
-                    BootstrapDialog.closeAll()
-                })
+        //         $content.find("#delete").click(function (){
+        //             BootstrapDialog.closeAll()
+        //         })
 
-                return $content;
-            }
-        });
+        //         return $content;
+        //     }
+        // });
 
 
     }
@@ -132,10 +156,11 @@ angular.module("mdmUI",['ngRoute','ngTable', 'ngTableExport']).controller('dashb
         {
 
             column={
-                "title": $scope.fields[field].title,
+                "title": $scope.fields[field].displayName,
                 "field":$scope.fields[field].name,
                 "show":$scope.fields[field].visible
             }
+            console.log(column)
             $scope.columns.push(column)
         }
         //console.log("columns:",$scope.columns)

@@ -1,0 +1,42 @@
+{
+    "type": "object",
+    "title": "Location",
+    "properties": {
+        "code": {
+            "title": "Code",
+            "type": "string",
+            "minLength": 3
+        },
+        "type": {
+            "title": "Location Type",
+            "type": "string",
+            "enum": [
+                "PINCODE",
+                "CITY",
+                "COUNTRY",
+                "STATE"
+            ]
+        },
+        "attributes": {
+            "title":"Attributes",
+            "type":"array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "title": "Key",
+                        "type": "string"
+                    },
+                    "value": {
+                        "title": "Value",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+
+    },
+    "required": [
+        "code", "type"
+    ]
+}
